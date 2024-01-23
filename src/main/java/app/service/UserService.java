@@ -1,7 +1,7 @@
 package app.service;
 
-import app.dao.UserDaoImpl;
 import app.models.User;
+import app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,33 +10,38 @@ import java.util.List;
 
 @Service
 @Transactional
-public class UserService {
+public class UserService implements CrudService<User, Long> {
 
-    private final UserDaoImpl userDao;
+    private final UserRepository userRepository;
 
     @Autowired
-    public UserService(UserDaoImpl userDao) {
-        this.userDao = userDao;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public List<User> getAllUsers() {
-        return userDao.getAllUsers();
+    @Override
+    public List<User> getAll() {
+        return userRepository.getAllUsers();
     }
 
+    @Override
     public User findById(Long id) {
-        return userDao.findById(id).orElse(new User());
+        return userRepository.findById(id).orElse(new User());
     }
 
+    @Override
     public void save(User user) {
-        userDao.save(user);
+        userRepository.saveAndFlush(user);
     }
-    
+
+    @Override
     public void update(User user) {
-        userDao.update(user);
+        userRepository.saveAndFlush(user);
     }
-    
+
+    @Override
     public void delete(Long id) {
-        userDao.deleteById(id);
+        userRepository.deleteById(id);
     }
 
 }
